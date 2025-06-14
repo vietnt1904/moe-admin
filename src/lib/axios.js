@@ -1,5 +1,5 @@
 import axios from "axios";
-import { authURL, baseURL } from "../constants";
+import { baseURL } from "../constants";
 
 export const instance = axios.create({
     baseURL: baseURL,
@@ -31,6 +31,7 @@ instance.interceptors.response.use(
     (error) => {
         if (error.response && error.response.status === 401) {
             console.error("Unauthorized! Redirecting to login...");
+
         }
         return Promise.reject(error);
     },
@@ -55,6 +56,7 @@ authInstance.interceptors.response.use(
     (error) => {
         if (error.response && error.response.status === 401) {
             console.error("Unauthorized! Redirecting to login...");
+            window.location.href = "/";
         }
         return Promise.reject(error);
     },

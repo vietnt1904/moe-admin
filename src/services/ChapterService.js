@@ -3,7 +3,7 @@ import { instance } from "../lib/axios";
 const ChapterService = {
   async getChaptersByStoryId(storyId) {
     const chapters = await instance
-      .get("/chapter", {
+      .get(`/admin/chapter/allstorychapters/${storyId}`, {
         params: {
           storyId: storyId,
         },
@@ -42,6 +42,42 @@ const ChapterService = {
       .then(({ data }) => data?.data);
     return chapter;
   },
+
+  // =============================== //
+
+  async getPendingChapters(page = 1, limit = 10) {
+    const chapters = await instance
+      .get("/admin/chapter/pendingchapters", {
+        params: {
+          page: page,
+          limit: limit,
+        },
+      })
+      .then(({ data }) => data?.chapters);
+    return chapters;
+  },
+
+  async getPendingChapterById(id) {
+    const chapter = await instance
+      .get(`/admin/chapter/pending/${id}`)
+      .then(({ data }) => data?.data);
+    return chapter;
+  },
+
+  async updatePendingChapter(id, data) {
+    const chapter = await instance
+      .patch(`/admin/chapter/pending/${id}`, data)
+      .then(({ data }) => data?.data);
+    return chapter;
+  },
+
+  async getChapterByIdAdmin (id) {
+    const chapter = await instance
+      .get(`/admin/chapter/allchapters/${id}`)
+      .then(({ data }) => data?.data);
+    return chapter;
+  },
+
 };
 
 export default ChapterService;

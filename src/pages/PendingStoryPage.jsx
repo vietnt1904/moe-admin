@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Paper,
   Avatar,
@@ -11,18 +10,16 @@ import {
   Divider,
   SimpleGrid,
   Code,
-  Tooltip,
-  ActionIcon,
-  Button, // Dùng để hiển thị ID hoặc slug nếu muốn
+  Button,
+  Textarea, // Dùng để hiển thị ID hoặc slug nếu muốn
 } from "@mantine/core";
 import { useNavigate, useParams } from "react-router-dom";
-import { useStory } from "../hooks/useStory";
-import { useChaptersByStoryId } from "../hooks/useChapter";
+import { usePendingStory } from "../hooks/useStory";
 import { dateOfBirth, formatDate } from "../utils";
-import { IconCalendar } from "@tabler/icons-react";
-import { IconEye } from "@tabler/icons-react";
-import { IconPencil } from "@tabler/icons-react";
-import { IconTrash } from "@tabler/icons-react";
+import { useForm } from "react-hook-form";
+import PropTypes from "prop-types";
+import StoryService from "../services/StoryService.js";
+import { useQueryClient } from "@tanstack/react-query";
 // Giả sử bạn có icon (ví dụ từ thư viện tabler-icons-react)
 // import { IconCheck, IconX, IconCalendar, IconPhone, IconMail, IconUser, IconLock } from '@tabler/icons-react';
 
@@ -47,52 +44,39 @@ const renderListAsBadges = (list) => {
   );
 };
 
-const StoryPage = () => {
+const PendingStoryPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: story } = useStory(id);
+  const queryClient = useQueryClient();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const { data: story } = usePendingStory(id);
   const data = story;
   const author = story?.Author;
   console.log(data);
 
-  const { data: chapters } = useChaptersByStoryId(id);
-  // console.log(chapters);
-  // const chapters = [
-  //   {
-  //     id: 1,
-  //     title: "Chương 1: Khởi đầu mới",
-  //     publishedAt: "2024-05-01T10:00:00Z",
-  //     views: 1502,
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "Chương 2: Gặp gỡ định mệnh",
-  //     publishedAt: "2024-05-08T10:00:00Z",
-  //     views: 1250,
-  //   },
-  //   {
-  //     id: 3,
-  //     title: "Chương 3: Thử thách đầu tiên",
-  //     publishedAt: null,
-  //     views: 0,
-  //   }, // Ví dụ chương chưa đăng
-  //   {
-  //     id: 4,
-  //     title: "Chương 4: Bí mật được hé lộ",
-  //     publishedAt: "2024-05-15T12:30:00Z",
-  //     views: 988,
-  //   },
-  // ];
   if (!story) {
     return <Paper p="md">Không có dữ liệu để hiển thị.</Paper>;
   }
 
-  const handleViewChapter = (chapterId) =>
-    console.log("View Chapter:", chapterId);
-  const handleEditChapter = (chapterId) =>
-    console.log("Edit Chapter:", chapterId);
-  const handleDeleteChapter = (chapterId) =>
-    console.log("Delete Chapter:", chapterId);
+  const handleDecision = (data, status) => {
+    console.log("status", status);
+    console.log("Submit", data);
+    StoryService.updatePendingStory(id, {...data, storyId: story.id, });
+    queryClient.invalidateQueries(["pendingStories"]);
+    navigate(-1);
+  };
+
+  const onAccept = (data) => {
+    handleDecision({ ...data, status: "accept" }, "accept");
+  };
+
+  const onReject = (data) => {
+    handleDecision({ ...data, status: "reject" }, "reject");
+  };
 
   return (
     <div className="p-4 space-y-6 bg-gray-50 min-h-screen">
@@ -312,109 +296,37 @@ const StoryPage = () => {
       {/* --- Phần Danh Sách Chương --- */}
       <Paper shadow="xs" p="lg" radius="md" withBorder>
         <Title order={3} mb="md">
-          Danh sách chương
+          Phê Duyệt Truyện
         </Title>
-        {/* Kiểm tra nếu không có chương nào */}
-        {!chapters || chapters.length === 0 ? (
-          <Text c="dimmed" ta="center">
-            Chưa có chương nào được thêm.
-          </Text>
-        ) : (
-          // Dùng Stack để xếp các chương dọc xuống, có khoảng cách
-          <Stack gap="md">
-            {chapters.map((chapter) => (
-              // Mỗi chương là một Group hoặc Paper nhỏ bên trong
-              <Paper
-                key={chapter?.id}
-                p="sm"
-                withBorder
-                radius="sm"
-                className="hover:bg-gray-50 transition-colors"
-              >
-                {/* Tailwind: hiệu ứng hover */}
-                <Group justify="space-between" wrap="nowrap">
-                  {/* Căn chỉnh nội dung và nút actions */}
-                  {/* Phần thông tin chương */}
-                  <Stack gap={2}>
-                    {/* Khoảng cách nhỏ giữa tiêu đề và thông tin phụ */}
-                    <Text fw={500} lineClamp={1}>
-                      {/* Giới hạn 1 dòng cho tiêu đề */}
-                      {chapter?.title || "Chưa có tiêu đề"}
-                    </Text>
-                    <Group gap="xs">
-                      {chapter?.publishedAt ? (
-                        <Tooltip
-                          label={`Xuất bản: ${formatDate(
-                            chapter?.publishedAt
-                          )}`}
-                        >
-                          <Badge
-                            size="sm"
-                            variant="light"
-                            color="teal"
-                            leftSection={<IconCalendar size={12} />}
-                          >
-                            Đã đăng
-                          </Badge>
-                        </Tooltip>
-                      ) : (
-                        <Badge size="sm" variant="light" color="gray">
-                          Bản nháp
-                        </Badge>
-                      )}
-                      <Text size="xs" c="dimmed">
-                        Lượt xem: {chapter?.views?.toLocaleString("vi-VN") || 0}
-                      </Text>
-                    </Group>
-                  </Stack>
-                  {/* Phần nút hành động */}
-                  <Group gap="xs" wrap="nowrap">
-                    <Button onClick={() => navigate(`/admin/chapters/${chapter?.id}`)} >
-                      Chi tiết
-                    </Button>
-                    <Tooltip label="Xem chương">
-                      <ActionIcon
-                        variant="subtle" // hoặc 'light', 'filled'
-                        color="blue"
-                        onClick={() => handleViewChapter(chapter?.id)}
-                        aria-label={`Xem ${chapter?.title}`}
-                      >
-                        <IconEye size={16} />
-                      </ActionIcon>
-                    </Tooltip>
-                    <Tooltip label="Sửa chương">
-                      <ActionIcon
-                        variant="subtle"
-                        color="gray"
-                        onClick={() => handleEditChapter(chapter?.id)}
-                        aria-label={`Sửa ${chapter?.title}`}
-                      >
-                        <IconPencil size={16} />
-                      </ActionIcon>
-                    </Tooltip>
-                    <Tooltip label="Xóa chương">
-                      <ActionIcon
-                        variant="subtle"
-                        color="red"
-                        onClick={() => handleDeleteChapter(chapter?.id)}
-                        aria-label={`Xóa ${chapter?.title}`}
-                      >
-                        <IconTrash size={16} />
-                      </ActionIcon>
-                    </Tooltip>
-                  </Group>
-                </Group>
-              </Paper>
-            ))}
-          </Stack>
-        )}
+        <form>
+          <Textarea
+            label="Nhập lý do phê duyệt truyện"
+            description="Lý do để đồng ý hoặc từ chối truyện"
+            placeholder="Lý do…"
+            {...register("reason", {
+              required: "Vui lòng nhập lý do",
+            })}
+            error={errors.reason?.message}
+          />
+          <Group position="right" mt="md" className="">
+            <Button bg={"yellow.4"} c={"black"} onClick={() => navigate(-1)}>
+              Quay lại
+            </Button>
+            <Button bg={"green"} onClick={handleSubmit(onAccept)}>
+              Đồng ý
+            </Button>
+            <Button bg={"red"} onClick={handleSubmit(onReject)}>
+              Từ chối
+            </Button>
+          </Group>
+        </form>
       </Paper>
     </div>
   );
 };
 
 // Component con để hiển thị cặp Label-Value cho gọn
-const InfoItem = ({ label, value, isCode = false, iconName }) => {
+const InfoItem = ({ label, value, isCode = false }) => {
   // Map iconName to actual Icon component if needed
   // const IconComponent = iconMap[iconName]; // Example mapping
   return (
@@ -442,6 +354,12 @@ const InfoItem = ({ label, value, isCode = false, iconName }) => {
   );
 };
 
+InfoItem.propTypes = {
+  label: PropTypes.string,
+  value: PropTypes.any,
+  isCode: PropTypes.bool,
+};
+
 // Hàm lấy màu cho Badge trạng thái (ví dụ)
 const getStatusColor = (status) => {
   switch (status?.toLowerCase()) {
@@ -459,4 +377,4 @@ const getStatusColor = (status) => {
   }
 };
 
-export default StoryPage;
+export default PendingStoryPage;

@@ -10,7 +10,7 @@ import { modals } from "@mantine/modals";
 import Notifications from "../Notifications";
 
 const Header = () => {
-    const { data } = { data: { unReadMessage: 5 } };
+    const { data } = { data: { unReadMessage: 0 } };
     const unReadMessage = data?.unReadMessage;
     const queryClient = useQueryClient();
 

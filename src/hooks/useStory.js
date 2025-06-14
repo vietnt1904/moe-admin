@@ -1,18 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import StoryService from "../services/StoryService";
 
-export const useStories = () => {
+export const useStories = (page, limit) => {
   return useQuery({
     queryKey: ["stories"],
-    queryFn: () => StoryService.getStories(),
+    queryFn: () => StoryService.getStories(page, limit),
     keepPreviousData: true,
   });
 };
 
-export const useStory = (id, slug) => {
+export const useStory = (id) => {
   return useQuery({
-    queryKey: ["story", id, slug],
-    queryFn: () => StoryService.getStoryById(id, slug),
+    queryKey: ["story", id],
+    queryFn: () => StoryService.getStoryById(id),
     keepPreviousData: true,
   });
 };
@@ -29,6 +29,22 @@ export const useStoriesSameAuthor = (id) => {
   return useQuery({
     queryKey: ["storiesSameAuthor", id],
     queryFn: () => StoryService.getStoriesByAuthor(id),
+    keepPreviousData: true,
+  });
+};
+
+export const usePendingStories = (page = 1, limit = 10) => {
+  return useQuery({
+    queryKey: ["pendingStories"],
+    queryFn: () => StoryService.getPendingStories(page, limit),
+    keepPreviousData: true,
+  });
+};
+
+export const usePendingStory = (id) => {
+  return useQuery({
+    queryKey: ["pendingStory", id],
+    queryFn: () => StoryService.getPendingStoryById(id),
     keepPreviousData: true,
   });
 };

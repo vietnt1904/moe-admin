@@ -32,3 +32,27 @@ export const useNextChapter = (id, storyId, chapterNumber) => {
         keepPreviousData: true,
     });
 };
+
+export const usePendingChapters = (page = 1, limit = 10) => {
+    return useQuery({
+        queryKey: ["pendingChapters"],
+        queryFn: () => ChapterService.getPendingChapters(page, limit),
+        keepPreviousData: true,
+    });
+};
+
+export const usePendingChapter = (id) => {
+    return useQuery({
+        queryKey: ["pendingChapter", id],
+        queryFn: () => ChapterService.getPendingChapterById(id),
+        keepPreviousData: true,
+    });
+};
+
+export const useChapterAdmin = (id) => {
+    return useQuery({
+        queryKey: ["chapterAdmin", id],
+        queryFn: () => ChapterService.getChapterByIdAdmin(id),
+        keepPreviousData: true,
+    });
+};

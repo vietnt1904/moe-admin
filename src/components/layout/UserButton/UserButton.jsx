@@ -10,10 +10,9 @@ export function UserButton() {
     const [opened, setOpened] = useState(false);
     const [logoutModalOpen, setLogoutModalOpen] = useState(false);
     const navigate = useNavigate();
-    const { data, isLoading, error } = useAccountInfo();
+    const { data: user, isLoading } = useAccountInfo();
 
     if (isLoading) return <p>Loading...</p>;
-    if (error) return <p>Error loading users</p>;
 
     const handleLogout = () => {
         AuthService.logout();
@@ -42,17 +41,17 @@ export function UserButton() {
                     <UnstyledButton onClick={() => setOpened((o) => !o)} className={classes.user}>
                         <Group>
                             <Avatar
-                                src={data?.avatar || "https://via.placeholder.com/150"}
+                                src={user?.avatar || "/images/Account.png"}
                                 radius="xl"
                             />
 
                             <div style={{ flex: 1 }}>
                                 <Text size="sm" fw={500}>
-                                    {data?.firstName || "hello"}
+                                    {user?.fullName || "unknown"}
                                 </Text>
 
                                 <Text c="dimmed" size="xs">
-                                    {data?.email || "hspoonlicker@outlook.com"}
+                                    {user?.email || "emailPlaceholder@gmail.com"}
                                 </Text>
                             </div>
 
@@ -64,10 +63,10 @@ export function UserButton() {
                 {/* Menu xuất hiện khi nhấn */}
                 <Popover.Dropdown>
                     <Menu>
-                        <Menu.Item icon={<IconUser size={16} />} onClick={handleProfile}>
+                        <Menu.Item icon={<IconUser size={16} />}>
                             Xem thông tin
                         </Menu.Item>
-                        <Menu.Item icon={<IconLock size={16} />} onClick={handleChangePassword}>
+                        <Menu.Item icon={<IconLock size={16} />}>
                             Đổi mật khẩu
                         </Menu.Item>
                         <Menu.Item

@@ -3,43 +3,49 @@ import { instance } from "../lib/axios";
 const StoryService = {
   async getStories(page = 1, limit = 10) {
     const stories = await instance
-      .get("/story", {
+      .get("/admin/story/allstories", {
         params: {
           page: page,
           limit: limit,
         },
       })
-      .then(({ data }) => data);
+      .then(({ data }) => data || []);
     return stories;
   },
 
-  async getStoryById(id, slug) {
+  async getStoryById(id) {
     const story = await instance
-      .get(`/story/${slug}-${id}`)
+      .get(`/admin/story/allstories/${id}`)
       .then(({ data }) => data?.data);
     return story;
   },
 
-  async getStoriesSameAuthor(id) {
+  async getPendingStories(page = 1, limit = 10) {
     const stories = await instance
-      .get(`/story/${id}/related`)
-      .then(({ data }) => data);
+      .get("/admin/story/pendingstories", {
+        params: {
+          page: page,
+          limit: limit,
+        },
+      })
+      .then(({ data }) => data || []);
     return stories;
   },
 
-  async getStoriesByAuthor(id) {
-    const stories = await instance
-      .get(`/story/${id}/related`)
-      .then(({ data }) => data);
-    return stories;
-  },
-
-  async writeStory(data) {
+  async getPendingStoryById(id) {
     const story = await instance
-      .post("/story/writestory", data)
-      .then(({ data }) => data);
+      .get(`/admin/story/pendingstories/${id}`)
+      .then(({ data }) => data?.data);
     return story;
   },
+
+  async updatePendingStory(id, data) {
+    const story = await instance
+      .patch(`/admin/story/pendingstories/${id}`, data)
+      .then(({ data }) => data?.data);
+    return story;
+  },
+
 };
 
 export default StoryService;

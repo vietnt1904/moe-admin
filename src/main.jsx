@@ -19,15 +19,20 @@ import HomePage from "./pages/HomePage.jsx";
 import '@mantine/carousel/styles.css';
 import LoginPage from "./pages/LoginPage.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
-import WriteStory from "./pages/WriteStory.jsx";
 import SettingPage from "./pages/SettingPage.jsx";
 import HistoryPage from "./pages/HistoryPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
-import NotificationPage from "./pages/NotificationPage.jsx";
 import AuthorPage from "./pages/AuthorPage.jsx";
 import StoryPage from "./pages/StoryPage.jsx";
 import ChapterPage from "./pages/ChapterPage.jsx";
 import { Button } from "@mantine/core";
+import AllStoriesPage from "./pages/AllStoriesPage.jsx";
+import PendingStoriesPage from "./pages/PendingStoriesPage.jsx";
+import PendingStoryPage from "./pages/PendingStoryPage.jsx";
+import PendingChaptersPage from "./pages/PendingChaptersPage.jsx";
+import PendingChapterPage from "./pages/PendingChapterPage.jsx";
+import AllUsersPage from "./pages/AllUsersPage.jsx";
+import UserPage from "./pages/UserPage.jsx";
 
 
 const theme = createTheme({
@@ -78,20 +83,44 @@ const router = createBrowserRouter([
                 element: <HomePage />,
             },
             {
-                path: "story/:title",
+                path: "stories",
+                element: <AllStoriesPage />,
+            },
+            {
+                path: "stories/pending",
+                element: <PendingStoriesPage />
+            },
+            {
+                path: "stories/pending/:id",
+                element: <PendingStoryPage />,
+            },
+            {
+                path: "stories/:id",
                 element: <StoryPage />,
             },
             {
-                path: "writestory",
-                element: <WriteStory />,
+                path: "chapters/pending",
+                element: <PendingChaptersPage />,
+            },
+            {
+                path: "chapters/pending/:id",
+                element: <PendingChapterPage />,
+            },
+            {
+                path: "chapters/:id",
+                element: <ChapterPage />,
+            },
+            {
+                path: "users",
+                element: <AllUsersPage />,
+            },
+            {
+                path: "users/:id",
+                element: <UserPage />,
             },
             {
                 path: "profile",
                 element: <ProfilePage />,
-            },
-            {
-                path: "notification",
-                element: <NotificationPage />,
             },
             {
                 path: "author",

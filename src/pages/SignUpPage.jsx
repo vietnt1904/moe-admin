@@ -44,17 +44,8 @@ const SignUpPage = () => {
     setApiError(null);
     setSuccessMessage(null);
 
-    // Data now directly matches model fields where applicable
-    console.log("Submitting registration:", {
-      fullName: data.fullName, // Use fullName
-      email: data.email,
-      username: data.username,
-      password: data.password, // Remember to hash this on the backend!
-      // sendNotification is not part of the User model, handle separately if needed
-    });
-
     try {
-      const dataOutput = await AuthService.signup(data);
+      await AuthService.signup(data);
       
       setSuccessMessage("Registration successful! Redirecting..."); // Updated success message
       reset();
@@ -62,7 +53,7 @@ const SignUpPage = () => {
       // Redirect after a short delay to show the success message
       setTimeout(() => {
         navigate('/');
-      }, 1500);
+      }, 1000);
 
     } catch (err) {
       console.error("Registration error:", err);

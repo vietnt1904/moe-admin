@@ -1,11 +1,31 @@
+export const dateOfBirth = (dateString) => {
+  if (!dateString) return 'N/A';
+  try {
+    return new Date(dateString).toLocaleDateString('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  } catch (error) {
+    console.log("Error formatting date:", error?.message);
+    return 'Invalid Date';
+  }
+};
+
 export const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  if (!dateString) return 'N/A';
+  try {
+    return new Date(dateString).toLocaleDateString('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit', // Bỏ comment nếu muốn hiển thị cả giờ
+      minute: '2-digit',
+    });
+  } catch (error) {
+    console.log("Error formatting date:", error?.message);
+    return 'Invalid Date';
+  }
 };
 
 export const slugify = (text) => {

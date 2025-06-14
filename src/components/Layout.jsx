@@ -29,20 +29,22 @@ const Layout = () => {
             <AppShell.Navbar>
                 <NavbarNested />
             </AppShell.Navbar>
-            <AppShell.Header>
+            <AppShell.Header className="relative">
                 <Header />
-            </AppShell.Header>
-            {/* Main App */}
-            <AppShell.Main bg={"gray.0"}>
                 <Button
+                className="absolute top-0 left-[300px]"
                     onClick={() => navigate(-1)}
                     variant="outline"
                     mb="md"
                     ml={10}
                     mt={10}
+                    bg={"green.1"}
                 >
                     ← Trang trước
                 </Button>
+            </AppShell.Header>
+            {/* Main App */}
+            <AppShell.Main bg={"gray.0"}>
                 <Outlet />
             </AppShell.Main>
         </AppShell>
