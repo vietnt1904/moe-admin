@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Paper,
   Avatar,
@@ -11,22 +10,17 @@ import {
   Divider,
   SimpleGrid,
   Code,
-  Tooltip,
-  ActionIcon,
   Button, // Dùng để hiển thị ID hoặc slug nếu muốn
 } from "@mantine/core";
 import { useNavigate, useParams } from "react-router-dom";
 import { useStory } from "../hooks/useStory";
 import { useChaptersByStoryId } from "../hooks/useChapter";
 import { dateOfBirth, formatDate } from "../utils";
-import { IconCalendar } from "@tabler/icons-react";
-import { IconEye } from "@tabler/icons-react";
-import { IconPencil } from "@tabler/icons-react";
-import { IconTrash } from "@tabler/icons-react";
-// Giả sử bạn có icon (ví dụ từ thư viện tabler-icons-react)
-// import { IconCheck, IconX, IconCalendar, IconPhone, IconMail, IconUser, IconLock } from '@tabler/icons-react';
+import StoryService from "../services/StoryService.js";
+import { notifications } from "@mantine/notifications";
+import { useQueryClient } from "@tanstack/react-query";
+import ChapterService from "../services/ChapterService.js";
 
-// Hàm trợ giúp hiển thị danh sách (ví dụ: Genres, Topics)
 const renderListAsBadges = (list) => {
   if (!list || list.length === 0) {
     return (
@@ -51,48 +45,56 @@ const StoryPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: story } = useStory(id);
-  const data = story;
   const author = story?.Author;
-  console.log(data);
 
   const { data: chapters } = useChaptersByStoryId(id);
-  // console.log(chapters);
-  // const chapters = [
-  //   {
-  //     id: 1,
-  //     title: "Chương 1: Khởi đầu mới",
-  //     publishedAt: "2024-05-01T10:00:00Z",
-  //     views: 1502,
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "Chương 2: Gặp gỡ định mệnh",
-  //     publishedAt: "2024-05-08T10:00:00Z",
-  //     views: 1250,
-  //   },
-  //   {
-  //     id: 3,
-  //     title: "Chương 3: Thử thách đầu tiên",
-  //     publishedAt: null,
-  //     views: 0,
-  //   }, // Ví dụ chương chưa đăng
-  //   {
-  //     id: 4,
-  //     title: "Chương 4: Bí mật được hé lộ",
-  //     publishedAt: "2024-05-15T12:30:00Z",
-  //     views: 988,
-  //   },
-  // ];
+  console.log('chapters', chapters);
+  const queryClient = useQueryClient();
+
   if (!story) {
     return <Paper p="md">Không có dữ liệu để hiển thị.</Paper>;
   }
 
-  const handleViewChapter = (chapterId) =>
-    console.log("View Chapter:", chapterId);
-  const handleEditChapter = (chapterId) =>
-    console.log("Edit Chapter:", chapterId);
-  const handleDeleteChapter = (chapterId) =>
-    console.log("Delete Chapter:", chapterId);
+  const handleChangeStatus = async () => {
+    if (!story) return;
+    let newStatus = story?.status === "active" ? "suspended" : "active";
+    const data = await StoryService.changeStoryStatusAdmin(id, newStatus);
+    if (data === true) {
+      queryClient.invalidateQueries(["story", id]);
+      notifications.show({
+        color: "green",
+        title: "Cập nhật thành công",
+        message: "Cập nhật trạng thái truyện thành công",
+      });
+    } else {
+      notifications.show({
+        color: "red",
+        title: "Cập nhật thất bại",
+        message: "Đã có lỗi xảy ra, vui lòng thử lại.",
+      });
+    }
+  };
+
+  const handleChangeStatusChapter = async (chapter) => {
+    if (!story) return;
+    let newStatus = chapter?.status === "published" ? "suspended" : "published";
+    const data = await ChapterService.changeChapterStatusAdmin(chapter?.id, newStatus);
+    if (data === true) {
+      await queryClient.invalidateQueries(["chapters", id]);
+      notifications.show({
+        color: "green",
+        title: "Cập nhật thành công",
+        message: "Cập nhật trạng thái chương truyện thành công",
+      })
+      console.log(chapter?.status, data);
+    } else {
+      notifications.show({
+        color: "red",
+        title: "Cập nhật thất bại",
+        message: "Đã có lỗi xảy ra, vui lòng thử lại.",
+      });
+    }
+  };
 
   return (
     <div className="p-4 space-y-6 bg-gray-50 min-h-screen">
@@ -171,9 +173,16 @@ const StoryPage = () => {
       </Paper>
       {/* --- Phần Thông Tin Nội Dung (Truyện/Bài viết) --- */}
       <Paper shadow="sm" p="lg" radius="md" withBorder>
-        <Title order={3} mb="md">
-          Thông Tin Truyện
-        </Title>
+        <div className="flex justify-between">
+          <Title order={3} mb="md">
+            Thông Tin Truyện
+          </Title>
+          <Button onClick={handleChangeStatus}>
+            {story?.status === "active"
+              ? "Tạm dừng truyện"
+              : "Bỏ tạm dừng truyện"}
+          </Button>
+        </div>
         <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg">
           {/* Cột 1: Ảnh và Tiêu đề */}
           <Stack>
@@ -342,26 +351,6 @@ const StoryPage = () => {
                       {chapter?.title || "Chưa có tiêu đề"}
                     </Text>
                     <Group gap="xs">
-                      {chapter?.publishedAt ? (
-                        <Tooltip
-                          label={`Xuất bản: ${formatDate(
-                            chapter?.publishedAt
-                          )}`}
-                        >
-                          <Badge
-                            size="sm"
-                            variant="light"
-                            color="teal"
-                            leftSection={<IconCalendar size={12} />}
-                          >
-                            Đã đăng
-                          </Badge>
-                        </Tooltip>
-                      ) : (
-                        <Badge size="sm" variant="light" color="gray">
-                          Bản nháp
-                        </Badge>
-                      )}
                       <Text size="xs" c="dimmed">
                         Lượt xem: {chapter?.views?.toLocaleString("vi-VN") || 0}
                       </Text>
@@ -369,39 +358,18 @@ const StoryPage = () => {
                   </Stack>
                   {/* Phần nút hành động */}
                   <Group gap="xs" wrap="nowrap">
-                    <Button onClick={() => navigate(`/admin/chapters/${chapter?.id}`)} >
+                    <Button
+                      onClick={() => navigate(`/admin/chapters/${chapter?.id}`)}
+                    >
                       Chi tiết
                     </Button>
-                    <Tooltip label="Xem chương">
-                      <ActionIcon
-                        variant="subtle" // hoặc 'light', 'filled'
-                        color="blue"
-                        onClick={() => handleViewChapter(chapter?.id)}
-                        aria-label={`Xem ${chapter?.title}`}
-                      >
-                        <IconEye size={16} />
-                      </ActionIcon>
-                    </Tooltip>
-                    <Tooltip label="Sửa chương">
-                      <ActionIcon
-                        variant="subtle"
-                        color="gray"
-                        onClick={() => handleEditChapter(chapter?.id)}
-                        aria-label={`Sửa ${chapter?.title}`}
-                      >
-                        <IconPencil size={16} />
-                      </ActionIcon>
-                    </Tooltip>
-                    <Tooltip label="Xóa chương">
-                      <ActionIcon
-                        variant="subtle"
-                        color="red"
-                        onClick={() => handleDeleteChapter(chapter?.id)}
-                        aria-label={`Xóa ${chapter?.title}`}
-                      >
-                        <IconTrash size={16} />
-                      </ActionIcon>
-                    </Tooltip>
+                    <Button
+                      onClick={() => handleChangeStatusChapter(chapter)}
+                    >
+                      {chapter?.status === "published"
+                        ? "Unpublish"
+                        : "Publish"}
+                    </Button>
                   </Group>
                 </Group>
               </Paper>
@@ -420,7 +388,6 @@ const InfoItem = ({ label, value, isCode = false, iconName }) => {
   return (
     <Group wrap="nowrap" gap="xs" justify="space-between">
       <Text size="sm" fw={500} className="whitespace-nowrap">
-        {/* Tailwind: không xuống dòng */}
         {/* {IconComponent && <ThemeIcon variant="light" size="xs" mr={4}><IconComponent size={14}/></ThemeIcon>} */}
         {label}:
       </Text>

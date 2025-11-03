@@ -78,6 +78,13 @@ const ChapterService = {
     return chapter;
   },
 
+  async changeChapterStatusAdmin(id, status) {
+    const chapter = await instance
+      .patch(`/admin/chapter/changestatus/${id}`, { status: status })
+      .then(({ data }) => data?.data);
+    return chapter;
+  },
+
 };
 
 export default ChapterService;

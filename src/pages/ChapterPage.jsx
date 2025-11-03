@@ -3,7 +3,6 @@ import {
   Paper,
   SimpleGrid,
   Text,
-  Textarea,
   Title,
 } from "@mantine/core";
 import { useNavigate, useParams } from "react-router-dom";
@@ -13,8 +12,7 @@ const ChapterPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: chapter } = useChapterAdmin(id);
-  console.log(chapter);
-
+  console.log("chapter", chapter);
   
   return (
     <div className="p-4 space-y-6 bg-gray-50 min-h-screen">
@@ -31,7 +29,7 @@ const ChapterPage = () => {
               color="green"
               className="ml-8"
               onClick={() => {
-                navigate(`/admin/stories/${chapter?.Story?.id}`);
+                navigate(`/admin/stories/${chapter?.storyId}`);
               }}
             >
               Xem truyện
@@ -44,9 +42,11 @@ const ChapterPage = () => {
             Trạng thái:{" "}
             {chapter?.status === "pending" ? "Đang chờ duyệt" : "Đã đăng"}
           </Text>
-          <Textarea size="lg" fw={500} label="Nội dung:">
+          <div className="border-2 border-gray-300 p-2 rounded-lg">
+          <Text size="lg" label="Nội dung:">
             {chapter?.content}
-          </Textarea>
+          </Text>
+          </div>
         </SimpleGrid>
       </Paper>
     </div>

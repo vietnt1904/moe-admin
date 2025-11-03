@@ -18,11 +18,8 @@ import ErrorPage from "./pages/ErrorPage.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import '@mantine/carousel/styles.css';
 import LoginPage from "./pages/LoginPage.jsx";
-import SignUpPage from "./pages/SignUpPage.jsx";
-import SettingPage from "./pages/SettingPage.jsx";
-import HistoryPage from "./pages/HistoryPage.jsx";
+// import SignUpPage from "./pages/SignUpPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
-import AuthorPage from "./pages/AuthorPage.jsx";
 import StoryPage from "./pages/StoryPage.jsx";
 import ChapterPage from "./pages/ChapterPage.jsx";
 import { Button } from "@mantine/core";
@@ -33,6 +30,9 @@ import PendingChaptersPage from "./pages/PendingChaptersPage.jsx";
 import PendingChapterPage from "./pages/PendingChapterPage.jsx";
 import AllUsersPage from "./pages/AllUsersPage.jsx";
 import UserPage from "./pages/UserPage.jsx";
+import TopicsPage from "./pages/TopicsPage.jsx";
+import GenresPage from "./pages/GenresPage.jsx";
+import BannerPage from "./pages/BannersPage.jsx";
 
 
 const theme = createTheme({
@@ -70,10 +70,10 @@ const router = createBrowserRouter([
         path: "/login",
         element: <LoginPage />,
     },
-    {
-        path: "/signup",
-        element: <SignUpPage />,
-    },
+    // {
+    //     path: "/signup",
+    //     element: <SignUpPage />,
+    // },
     {
         path: "/admin/",
         element: <Layout />,
@@ -123,20 +123,20 @@ const router = createBrowserRouter([
                 element: <ProfilePage />,
             },
             {
-                path: "author",
-                element: <AuthorPage />,
+                path: "topics",
+                element: <TopicsPage />,
             },
             {
-                path: "setting",
-                element: <SettingPage />,
-            },
-            {
-                path: "history",
-                element: <HistoryPage />,
+                path: "genres",
+                element: <GenresPage />,
             },
             {
                 path: "story/:title/:chapter",
                 element: <ChapterPage />,
+            },
+            {
+                path: "banners",
+                element: <BannerPage />,
             },
             {
                 path: "*",

@@ -5,8 +5,6 @@ import AuthService from "../services/AuthService";
 import { useForm } from "react-hook-form";
 
 const backgroundImageUrl = "/images/background.jpg";
-const googleLogoUrl =
-  "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"; // Keep external URL or download
 
 function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
@@ -57,14 +55,14 @@ function LoginPage() {
               Đăng nhập
             </div>
 
-            <div className="flex-1 w-64 rounded-tr-[78px] pt-[1px]">
+            {/* <div className="flex-1 w-64 rounded-tr-[78px] pt-[1px]">
               <Link
                 to={"/signup"}
                 className="w-full h-44 flex items-center justify-center rounded-l-full text-white font-inter italic font-extrabold text-3xl leading-10 no-underline transition duration-200"
               >
                 Đăng ký
               </Link>
-            </div>
+            </div> */}
           </div>
 
           <div className="flex absolute right-0 top-0 bottom-0 w-full md:w-[calc(80%-16rem)] h-full rounded-l-none md:rounded-l-[78px] backdrop-blur-lg justify-center items-center p-4 md:p-8">
@@ -115,7 +113,10 @@ function LoginPage() {
                   </button>
                 </div>
               )}
-              <form onSubmit={handleSubmit((data) => onSubmit(data))} className="w-full">
+              <form
+                onSubmit={handleSubmit((data) => onSubmit(data))}
+                className="w-full"
+              >
                 <div className="mb-6 text-center">
                   <h2 className="text-2xl text-white py-2">
                     Chào mừng
@@ -216,7 +217,7 @@ function LoginPage() {
                     "Log in"
                   )}
                 </button>
-                <button
+                {/* <button
                   type="button" // Important: prevent form submission
                   onClick={() => {
                     console.log("Google login clicked");
@@ -229,7 +230,7 @@ function LoginPage() {
                     className="h-5 w-5"
                   />
                   <span className="pl-3 font-medium">Log in with Google</span>
-                </button>
+                </button> */}
 
                 <div className="text-center mt-4 text-sm">
                   <p className="text-gray-300 py-1">

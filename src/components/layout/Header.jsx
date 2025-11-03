@@ -31,7 +31,7 @@ const Header = () => {
 
     return (
         <div className="flex items-center justify-between h-full px-4">
-            <p className="text-2xl font-bold text-primary">eCMarket</p>
+            <p className="text-2xl font-bold text-primary">Medegany</p>
 
             {/* Notification Popup */}
             <div className="relative inline-flex">

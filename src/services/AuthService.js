@@ -1,4 +1,4 @@
-import { jwtDecode } from "jwt-decode";
+// import { jwtDecode } from "jwt-decode";
 import { authInstance } from "../lib/axios";
 
 const AuthService = {
@@ -40,14 +40,14 @@ const AuthService = {
     localStorage.removeItem("token");
   },
 
-  async changePassword(userId, password, newPassword) {
-    const data = authInstance
-      .post("/users/changePassword/operator")
-      .then(({ data }) => {
-        return data;
-      });
-    return data;
-  },
+  // async changePassword(userId, password, newPassword) {
+  //   const data = authInstance
+  //     .post("/users/changePassword/operator")
+  //     .then(({ data }) => {
+  //       return data;
+  //     });
+  //   return data;
+  // },
 
   async getAccountInfo() {
     const user = localStorage.getItem("user");

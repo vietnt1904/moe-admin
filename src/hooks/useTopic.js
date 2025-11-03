@@ -8,3 +8,11 @@ export const useTopic = () => {
         keepPreviousData: true
     })
 };
+
+export const useAdminTopics = () => {
+    return useQuery({
+        queryKey: ["adminTopics"],
+        queryFn: () => TopicService.getAdminTopics(),
+        keepPreviousData: true
+    })
+};

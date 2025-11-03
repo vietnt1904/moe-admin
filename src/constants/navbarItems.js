@@ -1,5 +1,3 @@
-import { IconSettings } from "@tabler/icons-react";
-import { IconReport } from "@tabler/icons-react";
 import {
   IconCalendarStats,
   IconGauge,
@@ -18,16 +16,26 @@ export const NAVBAR_ITEMS = [
     ],
   },
   {
-    label: "Danh sách chương",
+    label: "Chương đang chờ duyệt",
     icon: IconCalendarStats,
-    links: [
-      { label: "Danh sách tất cả chương", link: "/admin/chapters" },
-      { label: "Chương đang chờ duyệt", link: "/admin/chapters/pending" },
-    ],
+    link: "/admin/chapters/pending",
   },
   {
     label: "Người dùng",
     icon: IconPresentationAnalytics,
     link: "/admin/users",
   },
+  {
+    label: "Thể loại & chủ đề",
+    icon: IconNotes,
+    links: [
+      { label: "Danh sách thể loại", link: "/admin/genres" },
+      { label: "Danh sách chủ đề", link: "/admin/topics" },
+    ],
+  },
+  {
+    label: "Banner sự kiện",
+    icon: IconNotes,
+    link: "/admin/banners",
+  }
 ];

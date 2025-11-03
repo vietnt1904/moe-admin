@@ -14,9 +14,8 @@ const AllUsersPage = () => {
   const [email, setEmail] = useDebouncedState("", TIMEWAIT);
   const [username, setUsername] = useDebouncedState("", TIMEWAIT);
   const { data, isLoading, error } = useUsers(page, limit, name, phone, email, username);
-  const users = data?.users || [];
+  const users = data?.users?.filter((user) => user?.id > 2) || [];
   const totalPages = data?.totalPages || 1;
-  console.log("user", users);
 
 
   return (

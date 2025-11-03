@@ -8,3 +8,11 @@ export const useGenre = () => {
         keepPreviousData: true
     })
 };
+
+export const useAdminGenres = () => {
+    return useQuery({
+        queryKey: ["adminGenres"],
+        queryFn: () => GenreService.getAdminGenres(),
+        keepPreviousData: true
+    })
+};

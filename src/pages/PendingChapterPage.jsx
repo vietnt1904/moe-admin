@@ -19,7 +19,6 @@ const PendingChapterPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: chapter } = usePendingChapter(id);
-  console.log(chapter);
 
   const {
     register,
@@ -27,20 +26,18 @@ const PendingChapterPage = () => {
     formState: { errors },
   } = useForm();
 
-  const handleDecision = (data, status) => {
-    console.log("status", status);
-    console.log("Submit", data);
+  const handleDecision = (data) => {
     ChapterService.updatePendingChapter(id, data);
     queryClient.invalidateQueries(["pendingChapters"]);
     navigate(-1);
   };
 
   const onAccept = (data) => {
-    handleDecision({ ...data, status: "accept" }, "accept");
+    handleDecision({ ...data, status: "accept" });
   };
 
   const onReject = (data) => {
-    handleDecision({ ...data, status: "reject" }, "reject");
+    handleDecision({ ...data, status: "reject" });
   };
 
   return (

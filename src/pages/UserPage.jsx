@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { useUser } from "../hooks/useUser.js";
 import {
   Avatar,
@@ -24,6 +24,7 @@ import { IconEdit } from "@tabler/icons-react";
 import UserService from "../services/UserService.js";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { notifications } from "@mantine/notifications";
 
 const UserPage = () => {
   const { id } = useParams();
@@ -32,6 +33,14 @@ const UserPage = () => {
   const user = data?.user;
   const [stone, setStone] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+
+  const adminData = localStorage.getItem("user");
+  let admin = null;
+  if(!adminData){
+    Navigate("/");
+  } else {
+    admin = JSON.parse(adminData);
+  }
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -60,6 +69,34 @@ const UserPage = () => {
     }
   };
 
+  const [changeRoleLoading, setChangeRoleLoading] = useState(false);
+
+  const handleChangeRole = async (e) => {
+    try {
+      setChangeRoleLoading(true);
+      e.preventDefault();
+      const newRole = user?.role === "user" ? "admin" : "user";
+      const data = await UserService.changeUserRole(id, newRole);
+      if (data?.success) {
+        notifications.show({
+          color: "green",
+          title: "Cập nhật thành công",
+          message: "Cập nhật vai trò người dùng thành công",
+        });
+      } else {
+        notifications.show({
+          color: "red",
+          title: "Cập nhật thất bại",
+          message: data?.message,
+        });
+      }
+      queryClient.invalidateQueries(["user", id]);
+      setChangeRoleLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
       <Card
@@ -74,7 +111,7 @@ const UserPage = () => {
           <Image
             src={user?.backgroundImage}
             alt="Background Image"
-            className="object-cover w-full h-full"
+            className="object-cover w-full h-full border-2 border-gray-600"
           />
           {/* Avatar overlapping background */}
           <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
@@ -83,7 +120,7 @@ const UserPage = () => {
               alt={user?.fullName}
               size={120} // Kích thước avatar
               radius="50%" // Bo tròn hoàn toàn
-              className="border-4 border-white shadow-md"
+              className="border-4 border-black shadow-md"
             />
           </div>
         </Box>
@@ -96,7 +133,7 @@ const UserPage = () => {
             {user?.fullName}
           </Title>
           <Text c="dimmed" size="sm">
-            @{user?.username}
+            {user?.username}
           </Text>
           <Badge
             color={roleColors[user?.role] || "gray"}
@@ -106,6 +143,14 @@ const UserPage = () => {
           >
             {user?.role.toUpperCase()}
           </Badge>
+          <Button
+            onClick={(e) => handleChangeRole(e)}
+            loading={changeRoleLoading}
+            disabled={changeRoleLoading}
+            display={admin?.id === user?.id ? "none" : "block"}
+          >
+            Change to {user?.role === "user" ? "admin" : "user"}
+          </Button>
         </Stack>
 
         {/* Details Section */}

@@ -10,7 +10,6 @@ const AllStoriesPage = () => {
   const { data, isLoading, error } = useStories(page, limit);
   const stories = data?.data;
   const totalPages = Math.ceil(data?.total / limit) || 1;
-  console.log(stories);
   const arrayToString = (array) => {
     return array.map((item) => item?.name).join(",\n ");
   };

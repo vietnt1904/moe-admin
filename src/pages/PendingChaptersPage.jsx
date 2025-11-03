@@ -9,7 +9,6 @@ const PendingChaptersPage = () => {
   const limit = 10;
   const { data: chapters, isLoading, error } = usePendingChapters(page, limit);
   const totalPages = Math.ceil(chapters?.total / limit) || 1;
-  console.log(chapters);
 
   return (
     <div className="p-4 space-y-6 bg-gray-50 min-h-screen">

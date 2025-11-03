@@ -17,7 +17,7 @@ const HomePage = () => {
                 Chào mừng trở lại!
               </Title>
               <Text c="dimmed" size="lg">
-                Đây là trang tổng quan quản trị cho Ganymede.
+                Đây là trang tổng quan quản trị cho Medegany.
               </Text>
               <Text size="sm" mt="xs">
                 Từ đây, bạn có thể dễ dàng truy cập các chức năng quản lý chính của hệ thống.

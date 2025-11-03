@@ -46,6 +46,13 @@ const StoryService = {
     return story;
   },
 
+  async changeStoryStatusAdmin(id, status) {
+    const story = await instance
+      .patch(`/admin/story/changestatus/${id}`, { status: status })
+      .then(({ data }) => data?.data);
+    return story;
+  },
+
 };
 
 export default StoryService;

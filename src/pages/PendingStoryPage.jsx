@@ -54,28 +54,24 @@ const PendingStoryPage = () => {
     formState: { errors },
   } = useForm();
   const { data: story } = usePendingStory(id);
-  const data = story;
   const author = story?.Author;
-  console.log(data);
 
   if (!story) {
     return <Paper p="md">Không có dữ liệu để hiển thị.</Paper>;
   }
 
-  const handleDecision = (data, status) => {
-    console.log("status", status);
-    console.log("Submit", data);
+  const handleDecision = (data) => {
     StoryService.updatePendingStory(id, {...data, storyId: story.id, });
     queryClient.invalidateQueries(["pendingStories"]);
     navigate(-1);
   };
 
   const onAccept = (data) => {
-    handleDecision({ ...data, status: "accept" }, "accept");
+    handleDecision({ ...data, status: "accept" });
   };
 
   const onReject = (data) => {
-    handleDecision({ ...data, status: "reject" }, "reject");
+    handleDecision({ ...data, status: "reject" });
   };
 
   return (
